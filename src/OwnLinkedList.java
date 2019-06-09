@@ -45,6 +45,12 @@ public class OwnLinkedList<T> implements List<T> {
         }
     }
 
+    public void addAll(OwnLinkedList<T> list) {
+        last.setNext(list.first);
+        list.first.setPrevious(this.last);
+        length = length + list.size();
+    }
+
     @Override
     public T get(int index) {
         return getNode(index).value;
