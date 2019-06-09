@@ -22,97 +22,63 @@ public class OwnLinkedList<T> implements List<T> {
     public void add(T value, int index) {
         validIndex(index);
         Node<T> node = new Node<>(value);
-        Node<T> prevNode = first;
-        Node<T> lastNode;
         if (index == 0) {
             first.setPrevious(node);
             node.setNext(first);
             first = node;
-            length++;
-            return;
-        }
-        if (index == length) {
-            last.setNext(node);
-            node.setPrevious(last);
-            last = node;
-            length++;
-            return;
-        }
-        for (int i = 0; i <= index; i++) {
-            if (i == index) {
-                lastNode = prevNode;
-                prevNode = lastNode.previous;
-                lastNode.setPrevious(node);
-                prevNode.setNext(node);
-                node.setNext(lastNode);
-                node.setPrevious(prevNode);
-            }
-            prevNode = prevNode.next;
+        } else if (index == length) {
+            add(node.value);
+        } else {
+            Node<T> prevNode = getNode(index);
+            prevNode.next.setPrevious(node);
+            node.next = prevNode.next;
+            node.previous = prevNode;
+            prevNode.next = node;
         }
         length++;
     }
 
     @Override
     public void addAll(List<T> list) {
-        if (!list.isEmpty()) {
-            Node<T> node;
-            for (int i = 0; i < list.size(); i++) {
-                node = new Node<>(list.get(i));
-                node.setPrevious(last);
-                last.setNext(node);
-                last = last.next;
-                length++;
-            }
+        for (int i = 0; i < list.size(); i++) {
+            add(list.get(i));
         }
     }
 
     @Override
     public T get(int index) {
-        validIndex(index);
-        Node<T> node = first;
-        for (int i = 0; i < index; i++) {
-            node = node.next;
-        }
-        return node.value;
+        return getNode(index).value;
     }
 
     @Override
     public void set(T value, int index) {
         validIndex(index);
-        Node<T> node = first;
-        if (index == 0) {
-            first.value = value;
-            return;
-        }
-        for (int i = 0; i < index; i++) {
-            node = node.next;
-        }
-        node.value = value;
+        getNode(index).value = value;
     }
 
     @Override
     public T remove(int index) {
-        validIndex(index);
-        Node<T> removedNode = first;
-        if (index == 0) {
-            return removeFirst();
+        if (!isEmpty()) {
+            validIndex(index);
+            if (index == 0) {
+                return removeFirst();
+            }
+            if (index == length - 1) {
+                return removeLast();
+            }
+            Node<T> removedNode = getNode(index);
+            removedNode.next.setPrevious(removedNode.previous);
+            removedNode.previous.setNext(removedNode.next);
+            length--;
+            return removedNode.value;
         }
-        if (index == length - 1) {
-            return removeLast();
-        }
-        for (int i = 0; i < index; i++) {
-            removedNode = removedNode.next;
-        }
-        removedNode.next.setPrevious(removedNode.previous);
-        removedNode.previous.setNext(removedNode.next);
-        length--;
-        return removedNode.value;
+        return null;
     }
 
     @Override
     public T remove(T o) {
         Node<T> node = first;
-          if (o.equals(first.value)) {
+        if (o.equals(first.value)) {
             return removeFirst();
         }
         if (o.equals(last.value)) {
@@ -141,9 +107,17 @@ public class OwnLinkedList<T> implements List<T> {
     }
 
     private void validIndex(int index) {
-        if (index < 0 || index > length-1) {
+        if (index < 0 || index > length - 1) {
             throw new IndexOutOfBoundsException(index + "is not valid index");
         }
+    }
+
+    private Node<T> getNode(int index) {
+        Node<T> node = first;
+        for (int i = 0; i < index; i++) {
+            node = node.next;
+        }
+        return node;
     }
 
     private T removeFirst() {
@@ -165,12 +139,12 @@ public class OwnLinkedList<T> implements List<T> {
     @Override
     public String toString() {
         Node<T> node = first;
-        String s = "OwnLinkedList{";
+        StringBuilder s = new StringBuilder("OwnLinkedList{");
         for (int i = 0; i < length; i++) {
-            s += node.value + " ";
+            s.append(node.value).append(" ");
             node = node.next;
         }
-        return s + "}";
+        return s.append("}").toString();
     }
 
     private class Node<T> {
