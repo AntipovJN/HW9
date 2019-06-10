@@ -29,7 +29,7 @@ public class OwnLinkedList<T> implements List<T> {
         } else if (index == length) {
             add(node.value);
         } else {
-            Node<T> prevNode = getNode(index);
+            Node<T> prevNode = getNode(index - 1);
             prevNode.next.setPrevious(node);
             node.next = prevNode.next;
             node.previous = prevNode;
@@ -49,6 +49,7 @@ public class OwnLinkedList<T> implements List<T> {
         last.setNext(list.first);
         list.first.setPrevious(this.last);
         length = length + list.size();
+        last = list.last;
     }
 
     @Override
@@ -75,6 +76,8 @@ public class OwnLinkedList<T> implements List<T> {
             Node<T> removedNode = getNode(index);
             removedNode.next.setPrevious(removedNode.previous);
             removedNode.previous.setNext(removedNode.next);
+            removedNode.setPrevious(null);
+            removedNode.setNext(null);
             length--;
             return removedNode.value;
         }
@@ -90,8 +93,8 @@ public class OwnLinkedList<T> implements List<T> {
         if (o.equals(last.value)) {
             return removeLast();
         }
-        while (node != last) {
-            if (node.value == o) {
+        while (!node.equals(last)) {
+            if (node.value.equals(o)) {
                 node.previous.setNext(node.next);
                 node.next.setPrevious(node.previous);
                 length--;
@@ -112,6 +115,22 @@ public class OwnLinkedList<T> implements List<T> {
         return length == 0;
     }
 
+    public void clear() {
+        first = null;
+        last = null;
+        length = 0;
+    }
+
+    public T[] toArray() {
+        T[] array = (T[]) new Object[length - 1];
+        Node<T> node = first;
+        for (int i = 0; i < length - 1; i++) {
+            array[i] = node.value;
+            node = node.next;
+        }
+        return array;
+    }
+
     private void validIndex(int index) {
         if (index < 0 || index > length - 1) {
             throw new IndexOutOfBoundsException(index + "is not valid index");
@@ -119,6 +138,23 @@ public class OwnLinkedList<T> implements List<T> {
     }
 
     private Node<T> getNode(int index) {
+        validIndex(index);
+        if (index > length / 2) {
+            return getFromEnd(index);
+        }
+        return getFromStart(index);
+    }
+
+    private Node<T> getFromEnd(int index) {
+        Node<T> node = last;
+        System.out.println(last.value);
+        for (int i = length - 1; i > index; i--) {
+            node = node.previous;
+        }
+        return node;
+    }
+
+    private Node<T> getFromStart(int index) {
         Node<T> node = first;
         for (int i = 0; i < index; i++) {
             node = node.next;
@@ -170,5 +206,6 @@ public class OwnLinkedList<T> implements List<T> {
         public void setNext(Node next) {
             this.next = next;
         }
+
     }
 }
