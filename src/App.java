@@ -1,5 +1,3 @@
-import java.util.LinkedList;
-
 public class App {
 
     public static void main(String[] args) {
@@ -13,11 +11,11 @@ public class App {
         stringOwnLinkedList2.add("321");
         stringOwnLinkedList2.add("444");
         stringOwnLinkedList.addAll(stringOwnLinkedList2);
-        //stringOwnLinkedList.set("change", 4);
+        stringOwnLinkedList.set("change", 4);
         stringOwnLinkedList.remove(0);
         System.out.println(stringOwnLinkedList.toString());
         stringOwnLinkedList.add("index=2", 2);
-        System.out.println(stringOwnLinkedList);
+        System.out.println(stringOwnLinkedList.toString());
         System.out.println(stringOwnLinkedList.get(5));
     }
 }

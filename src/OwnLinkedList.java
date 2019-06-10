@@ -147,7 +147,6 @@ public class OwnLinkedList<T> implements List<T> {
 
     private Node<T> getFromEnd(int index) {
         Node<T> node = last;
-        System.out.println(last.value);
         for (int i = length - 1; i > index; i--) {
             node = node.previous;
         }
