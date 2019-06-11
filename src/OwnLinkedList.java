@@ -46,10 +46,12 @@ public class OwnLinkedList<T> implements List<T> {
     }
 
     public void addAll(OwnLinkedList<T> list) {
-        last.setNext(list.first);
-        list.first.setPrevious(this.last);
-        length = length + list.size();
-        last = list.last;
+        if (!list.isEmpty()) {
+            last.setNext(list.first);
+            list.first.setPrevious(this.last);
+            length = length + list.size();
+            last = list.last;
+        }
     }
 
     @Override
@@ -87,17 +89,9 @@ public class OwnLinkedList<T> implements List<T> {
     @Override
     public T remove(T o) {
         Node<T> node = first;
-        if (o.equals(first.value)) {
-            return removeFirst();
-        }
-        if (o.equals(last.value)) {
-            return removeLast();
-        }
-        while (!node.equals(last)) {
+        for (int i = 0; i < length - 1; i++) {
             if (node.value.equals(o)) {
-                node.previous.setNext(node.next);
-                node.next.setPrevious(node.previous);
-                length--;
+                remove(i);
                 return node.value;
             }
             node = node.next;
@@ -116,19 +110,15 @@ public class OwnLinkedList<T> implements List<T> {
     }
 
     public void clear() {
-        first = null;
-        last = null;
-        length = 0;
-    }
-
-    public T[] toArray() {
-        T[] array = (T[]) new Object[length - 1];
-        Node<T> node = first;
-        for (int i = 0; i < length - 1; i++) {
-            array[i] = node.value;
-            node = node.next;
+        for (Node<T> node = first; node != null; ) {
+            Node<T> next = node.next;
+            node.value = null;
+            node.setNext(null);
+            node.setPrevious(null);
+            node = next;
         }
-        return array;
+        first = last = null;
+        length = 0;
     }
 
     private void validIndex(int index) {
@@ -188,7 +178,7 @@ public class OwnLinkedList<T> implements List<T> {
         return s.append("}").toString();
     }
 
-    private class Node<T> {
+    private static class Node<T> {
 
         private Node<T> previous;
         private Node<T> next;
@@ -206,5 +196,9 @@ public class OwnLinkedList<T> implements List<T> {
             this.next = next;
         }
 
+        @Override
+        public String toString() {
+            return "Node{value=" + value + '}';
+        }
     }
 }
